@@ -391,8 +391,14 @@ export default function SetupPage() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => setStep((current) => Math.max(1, current - 1))}
-              disabled={step === 1 || isSubmitting}
+              onClick={() => {
+                if (step === 1) {
+                  navigate("/dashboard")
+                } else {
+                  setStep((current) => current - 1)
+                }
+              }}
+              disabled={isSubmitting}
               className="border-white/20 bg-transparent text-slate-100 hover:bg-white/10"
             >
               Back
