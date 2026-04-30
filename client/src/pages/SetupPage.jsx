@@ -44,7 +44,7 @@ const difficulties = [
     title: "Easy",
     description: "Warm-up questions with straightforward scenarios.",
     className:
-      "border-green-500/40 bg-green-500/10 text-green-100 hover:border-green-400/60",
+      "border-green-500/40 bg-green-500/10 text-green-800 dark:text-green-100 hover:border-green-400/60",
     activeClassName: "ring-2 ring-green-400/70 border-green-400 bg-green-500/20",
   },
   {
@@ -52,7 +52,7 @@ const difficulties = [
     title: "Medium",
     description: "Realistic mid-level challenges and tradeoffs.",
     className:
-      "border-yellow-500/40 bg-yellow-500/10 text-yellow-100 hover:border-yellow-400/60",
+      "border-yellow-500/40 bg-yellow-500/10 text-yellow-800 dark:text-yellow-100 hover:border-yellow-400/60",
     activeClassName:
       "ring-2 ring-yellow-400/70 border-yellow-400 bg-yellow-500/20",
   },
@@ -61,7 +61,7 @@ const difficulties = [
     title: "Hard",
     description: "Complex, high-pressure and deep technical prompts.",
     className:
-      "border-red-500/40 bg-red-500/10 text-red-100 hover:border-red-400/60",
+      "border-red-500/40 bg-red-500/10 text-red-800 dark:text-red-100 hover:border-red-400/60",
     activeClassName: "ring-2 ring-red-400/70 border-red-400 bg-red-500/20",
   },
 ]
@@ -202,14 +202,14 @@ export default function SetupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 p-6 text-slate-100 md:p-10">
-      <div className="mx-auto w-full max-w-4xl space-y-6">
-        <div className="flex items-center justify-between">
+    <div className="min-h-screen bg-slate-50 p-4 text-slate-800 dark:bg-slate-950 dark:text-slate-100 sm:p-6 md:p-10">
+      <div className="mx-auto w-full max-w-4xl space-y-4 sm:space-y-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-3xl font-semibold text-white">Interview setup</h1>
-            <p className="mt-1 text-slate-300">Configure your next mock interview.</p>
+            <h1 className="text-2xl font-semibold text-slate-900 dark:text-white sm:text-3xl">Interview setup</h1>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-300">Configure your next mock interview.</p>
           </div>
-          <div className="rounded-full border border-violet-500/40 bg-violet-500/15 px-4 py-2 text-sm font-medium text-violet-200">
+          <div className="self-start rounded-full border border-violet-500/40 bg-violet-500/15 px-3 py-1.5 text-xs font-medium text-violet-700 dark:text-violet-200 sm:px-4 sm:py-2 sm:text-sm">
             {stepLabel(step)}
           </div>
         </div>
@@ -218,16 +218,16 @@ export default function SetupPage() {
           onSubmit={form.handleSubmit(createInterview)}
           className="space-y-6"
         >
-          <Card className="border-white/10 bg-white/5">
+          <Card className="border-slate-200 bg-white dark:border-white/10 dark:bg-white/5">
             <CardHeader>
-              <CardTitle className="text-xl text-white">
+              <CardTitle className="text-xl text-slate-900 dark:text-white">
                 {step === 1
                   ? "Step 1 — Role & Type"
                   : step === 2
                     ? "Step 2 — Difficulty & Duration"
                     : "Step 3 — Camera & Mic Check"}
               </CardTitle>
-              <CardDescription className="text-slate-300">
+              <CardDescription className="text-slate-500 dark:text-slate-300">
                 {step === 1
                   ? "Define the position and interview style."
                   : step === 2
@@ -239,24 +239,24 @@ export default function SetupPage() {
               {step === 1 ? (
                 <>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-200">
+                    <label className="text-sm font-medium text-slate-700 dark:text-slate-200">
                       Job Role
                     </label>
                     <Input
                       placeholder='e.g. "Frontend Engineer"'
-                      className="border-white/15 bg-slate-900/40 text-white placeholder:text-slate-400 focus-visible:ring-violet-500"
+                      className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus-visible:ring-violet-500 dark:border-white/15 dark:bg-slate-900/40 dark:text-white"
                       {...form.register("role")}
                     />
                     {form.formState.errors.role ? (
-                      <p className="text-sm text-red-300">
+                      <p className="text-sm text-red-500 dark:text-red-300">
                         {form.formState.errors.role.message}
                       </p>
                     ) : null}
                   </div>
 
                   <div className="space-y-3">
-                    <p className="text-sm font-medium text-slate-200">Interview Type</p>
-                    <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                    <p className="text-sm font-medium text-slate-700 dark:text-slate-200">Interview Type</p>
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                       {interviewTypes.map((typeOption) => {
                         const Icon = typeOption.icon
                         const isSelected = selectedType === typeOption.value
@@ -269,16 +269,16 @@ export default function SetupPage() {
                             className={`rounded-xl border p-4 text-left transition ${
                               isSelected
                                 ? "border-violet-400 bg-violet-500/15"
-                                : "border-white/10 bg-slate-900/30 hover:border-violet-500/40"
+                                : "border-slate-200 bg-slate-50 hover:border-violet-500/40 dark:border-white/10 dark:bg-slate-900/30"
                             }`}
                           >
-                            <div className="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-slate-800/80 text-violet-300">
+                            <div className="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-slate-200 text-violet-600 dark:bg-slate-800/80 dark:text-violet-300">
                               <Icon className="h-5 w-5" />
                             </div>
-                            <h3 className="font-semibold text-white">
+                            <h3 className="font-semibold text-slate-900 dark:text-white">
                               {typeOption.title}
                             </h3>
-                            <p className="mt-1 text-sm text-slate-300">
+                            <p className="mt-1 text-sm text-slate-500 dark:text-slate-300">
                               {typeOption.description}
                             </p>
                           </button>
@@ -292,8 +292,8 @@ export default function SetupPage() {
               {step === 2 ? (
                 <>
                   <div className="space-y-3">
-                    <p className="text-sm font-medium text-slate-200">Difficulty</p>
-                    <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                    <p className="text-sm font-medium text-slate-700 dark:text-slate-200">Difficulty</p>
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                       {difficulties.map((difficultyOption) => {
                         const isSelected = selectedDifficulty === difficultyOption.value
 
@@ -317,12 +317,12 @@ export default function SetupPage() {
                   </div>
 
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-medium text-slate-200">Duration</p>
-                      <p className="text-sm font-semibold text-violet-300">
-                        {duration} minutes
-                      </p>
-                    </div>
+                     <div className="flex items-center justify-between">
+                       <p className="text-sm font-medium text-slate-700 dark:text-slate-200">Duration</p>
+                       <p className="text-sm font-semibold text-violet-600 dark:text-violet-300">
+                         {duration} minutes
+                       </p>
+                     </div>
                     <Slider
                       min={5}
                       max={30}
@@ -332,8 +332,8 @@ export default function SetupPage() {
                         form.setValue("duration", value[0])
                       }}
                     />
-                    <p className="text-sm text-slate-300">
-                      ~{estimatedQuestions} questions
+                    <p className="text-sm text-slate-500 dark:text-slate-300">
+                       ~{estimatedQuestions} questions
                     </p>
                   </div>
                 </>
@@ -341,12 +341,12 @@ export default function SetupPage() {
 
               {step === 3 ? (
                 <div className="space-y-4">
-                  <div className="overflow-hidden rounded-xl border border-white/10 bg-slate-900/40">
-                    {mediaError ? (
-                      <div className="flex items-start gap-3 p-5 text-sm text-red-200">
-                        <TriangleAlert className="mt-0.5 h-5 w-5 text-red-300" />
-                        <p>{mediaError}</p>
-                      </div>
+                  <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-100 dark:border-white/10 dark:bg-slate-900/40">
+                     {mediaError ? (
+                       <div className="flex items-start gap-3 p-5 text-sm text-red-600 dark:text-red-200">
+                         <TriangleAlert className="mt-0.5 h-5 w-5 text-red-500 dark:text-red-300" />
+                         <p>{mediaError}</p>
+                       </div>
                     ) : (
                       <video
                         ref={videoRef}
@@ -358,11 +358,11 @@ export default function SetupPage() {
                     )}
                   </div>
 
-                  <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                    <div className="flex items-center gap-3 rounded-lg border border-white/10 bg-slate-900/30 px-4 py-3">
-                      <Video className="h-5 w-5 text-slate-300" />
-                      <p className="text-sm text-slate-200">Camera access</p>
-                      <span className="ml-auto">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 dark:border-white/10 dark:bg-slate-900/30">
+                       <Video className="h-5 w-5 text-slate-400 dark:text-slate-300" />
+                       <p className="text-sm text-slate-700 dark:text-slate-200">Camera access</p>
+                       <span className="ml-auto">
                         {cameraGranted ? (
                           <CheckCircle2 className="h-5 w-5 text-green-400" />
                         ) : (
@@ -370,10 +370,10 @@ export default function SetupPage() {
                         )}
                       </span>
                     </div>
-                    <div className="flex items-center gap-3 rounded-lg border border-white/10 bg-slate-900/30 px-4 py-3">
-                      <Mic className="h-5 w-5 text-slate-300" />
-                      <p className="text-sm text-slate-200">Microphone access</p>
-                      <span className="ml-auto">
+                    <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 dark:border-white/10 dark:bg-slate-900/30">
+                       <Mic className="h-5 w-5 text-slate-400 dark:text-slate-300" />
+                       <p className="text-sm text-slate-700 dark:text-slate-200">Microphone access</p>
+                       <span className="ml-auto">
                         {micGranted ? (
                           <CheckCircle2 className="h-5 w-5 text-green-400" />
                         ) : (
@@ -387,7 +387,7 @@ export default function SetupPage() {
             </CardContent>
           </Card>
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
             <Button
               type="button"
               variant="outline"
@@ -399,7 +399,7 @@ export default function SetupPage() {
                 }
               }}
               disabled={isSubmitting}
-              className="border-white/20 bg-transparent text-slate-100 hover:bg-white/10"
+              className="w-full border-slate-300 bg-transparent text-slate-700 hover:bg-slate-100 dark:border-white/20 dark:text-slate-100 dark:hover:bg-white/10 sm:w-auto"
             >
               Back
             </Button>
@@ -408,7 +408,7 @@ export default function SetupPage() {
               <Button
                 type="button"
                 onClick={validateAndNext}
-                className="bg-violet-500 text-white hover:bg-violet-600"
+                className="w-full bg-violet-500 text-white hover:bg-violet-600 sm:w-auto"
               >
                 Next
               </Button>
@@ -416,7 +416,7 @@ export default function SetupPage() {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-violet-500 text-white hover:bg-violet-600"
+                className="w-full bg-violet-500 text-white hover:bg-violet-600 sm:w-auto"
               >
                 {isSubmitting ? "Starting..." : "Start Interview"}
               </Button>

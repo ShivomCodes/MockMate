@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react"
-import { useNavigate } from "react-router-dom"
 import { useAuth } from "@/context/AuthContext"
 import { authClient } from "@/lib/authClient"
 import api from "@/lib/api"
@@ -11,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
+import AppLayout from "@/components/AppLayout"
 
 function getInitials(name) {
   if (!name || typeof name !== "string") {
@@ -43,7 +43,6 @@ function formatDate(value) {
 export default function ProfilePage() {
   const { user } = useAuth()
   const { toast } = useToast()
-  const navigate = useNavigate()
 
   const [interviews, setInterviews] = useState([])
   const [isLoadingStats, setIsLoadingStats] = useState(true)
@@ -55,8 +54,6 @@ export default function ProfilePage() {
   const [newPassword, setNewPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [isChangingPassword, setIsChangingPassword] = useState(false)
-
-  const [isSigningOut, setIsSigningOut] = useState(false)
 
   useEffect(() => {
     document.title = "MockMate AI — Profile"
@@ -216,287 +213,205 @@ export default function ProfilePage() {
     }
   }
 
-  async function handleSignOut() {
-    try {
-      setIsSigningOut(true)
-      const result = await authClient.signOut()
-      if (result?.error) {
-        throw result.error
-      }
-      navigate("/auth", { replace: true })
-    } catch {
-      toast({
-        variant: "destructive",
-        title: "Sign out failed",
-        description: "Please try again.",
-      })
-    } finally {
-      setIsSigningOut(false)
-    }
-  }
-
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <aside className="fixed left-0 top-0 flex h-screen w-64 flex-col border-r border-white/10 bg-slate-950 px-5 py-6">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/20 text-sm font-bold text-violet-300">
-            MM
-          </div>
-          <div>
-            <p className="text-sm font-semibold tracking-wide text-white">
-              MockMate AI
-            </p>
-          </div>
-        </div>
+    <AppLayout>
+      <header className="mb-6 sm:mb-8">
+        <h1 className="text-2xl font-semibold text-slate-900 dark:text-white sm:text-3xl">Profile</h1>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-300 sm:text-base">
+          Manage your account and review your performance.
+        </p>
+      </header>
 
-        <nav className="mt-10 space-y-2">
-          <button
-            type="button"
-            onClick={() => navigate("/dashboard")}
-            className="flex w-full items-center rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-300 transition hover:bg-white/5 hover:text-white"
-          >
-            Dashboard
-          </button>
-          <button
-            type="button"
-            className="flex w-full items-center rounded-lg border border-violet-500/40 bg-violet-500/20 px-3 py-2 text-left text-sm font-medium text-violet-200"
-          >
-            Profile
-          </button>
-        </nav>
-
-        <div className="mt-auto space-y-4 border-t border-white/10 pt-4">
-          <div className="flex items-center gap-3">
-            <Avatar className="h-9 w-9">
-              <AvatarImage src={user?.image || ""} alt={displayName} />
-              <AvatarFallback className="bg-violet-500/20 text-violet-200">
-                {getInitials(displayName)}
-              </AvatarFallback>
-            </Avatar>
-            <p className="truncate text-sm font-medium text-slate-200">
-              {displayName}
-            </p>
-          </div>
-          <Button
-            type="button"
-            onClick={handleSignOut}
-            disabled={isSigningOut}
-            variant="outline"
-            className="w-full border-white/20 bg-transparent text-slate-100 hover:bg-white/10"
-          >
-            {isSigningOut ? "Signing out..." : "Sign Out"}
-          </Button>
-        </div>
-      </aside>
-
-      <main className="ml-64 min-h-screen p-8">
-        <header className="mb-8">
-          <h1 className="text-3xl font-semibold text-white">Profile</h1>
-          <p className="mt-1 text-slate-300">
-            Manage your account and review your performance.
+      {/* Profile Card */}
+      <div className="mb-6 flex flex-col items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 text-center dark:border-white/10 dark:bg-white/5 sm:mb-8 sm:flex-row sm:gap-6 sm:p-6 sm:text-left">
+        <Avatar className="h-16 w-16 sm:h-20 sm:w-20">
+          <AvatarImage src={user?.image || ""} alt={displayName} />
+          <AvatarFallback className="bg-violet-500/15 text-xl font-bold text-violet-600 dark:bg-violet-500/20 dark:text-violet-200 sm:text-2xl">
+            {getInitials(displayName)}
+          </AvatarFallback>
+        </Avatar>
+        <div>
+          <h2 className="text-xl font-semibold text-slate-900 dark:text-white sm:text-2xl">{displayName}</h2>
+          <p className="text-sm text-slate-400">{user?.email || ""}</p>
+          <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+            Member since {formatDate(user?.createdAt)}
           </p>
-        </header>
-
-        {/* Profile Card */}
-        <div className="mb-8 flex items-center gap-6 rounded-2xl border border-white/10 bg-white/5 p-6">
-          <Avatar className="h-20 w-20">
-            <AvatarImage src={user?.image || ""} alt={displayName} />
-            <AvatarFallback className="bg-violet-500/20 text-2xl font-bold text-violet-200">
-              {getInitials(displayName)}
-            </AvatarFallback>
-          </Avatar>
-          <div>
-            <h2 className="text-2xl font-semibold text-white">{displayName}</h2>
-            <p className="text-sm text-slate-400">{user?.email || ""}</p>
-            <p className="mt-1 text-xs text-slate-500">
-              Member since {formatDate(user?.createdAt)}
-            </p>
-          </div>
         </div>
+      </div>
 
-        {/* Stats */}
-        <section className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {isLoadingStats ? (
-            <>
-              <Skeleton className="h-28 w-full bg-white/10" />
-              <Skeleton className="h-28 w-full bg-white/10" />
-              <Skeleton className="h-28 w-full bg-white/10" />
-            </>
-          ) : (
-            <>
-              <Card className="border-white/10 bg-white/5">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-slate-300">
-                    Total interviews
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-3xl font-semibold text-white">
-                    {stats.totalInterviews}
-                  </p>
-                  <p className="mt-1 text-xs text-slate-400">
-                    {stats.completedInterviews} completed
-                  </p>
-                </CardContent>
-              </Card>
+      {/* Stats */}
+      <section className="mb-6 grid grid-cols-1 gap-3 sm:mb-8 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3">
+        {isLoadingStats ? (
+          <>
+            <Skeleton className="h-28 w-full bg-slate-100 dark:bg-white/10" />
+            <Skeleton className="h-28 w-full bg-slate-100 dark:bg-white/10" />
+            <Skeleton className="h-28 w-full bg-slate-100 dark:bg-white/10" />
+          </>
+        ) : (
+          <>
+            <Card className="border-slate-200 bg-white dark:border-white/10 dark:bg-white/5">
+              <CardHeader className="p-4 pb-1 sm:p-6 sm:pb-2">
+                <CardTitle className="text-xs font-medium text-slate-500 dark:text-slate-300 sm:text-sm">
+                  Total interviews
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
+                <p className="text-2xl font-semibold text-slate-900 dark:text-white sm:text-3xl">
+                  {stats.totalInterviews}
+                </p>
+                <p className="mt-1 text-xs text-slate-400">
+                  {stats.completedInterviews} completed
+                </p>
+              </CardContent>
+            </Card>
 
-              <Card className="border-white/10 bg-white/5">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-slate-300">
-                    Average score
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-3xl font-semibold text-white">
-                    {stats.averageScore === null ? "—" : `${stats.averageScore}%`}
-                  </p>
-                  <p className="mt-1 text-xs text-slate-400">
-                    Best: {stats.bestScore === null ? "—" : `${stats.bestScore}%`}
-                  </p>
-                </CardContent>
-              </Card>
+            <Card className="border-slate-200 bg-white dark:border-white/10 dark:bg-white/5">
+              <CardHeader className="p-4 pb-1 sm:p-6 sm:pb-2">
+                <CardTitle className="text-xs font-medium text-slate-500 dark:text-slate-300 sm:text-sm">
+                  Average score
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
+                <p className="text-2xl font-semibold text-slate-900 dark:text-white sm:text-3xl">
+                  {stats.averageScore === null ? "—" : `${stats.averageScore}%`}
+                </p>
+                <p className="mt-1 text-xs text-slate-400">
+                  Best: {stats.bestScore === null ? "—" : `${stats.bestScore}%`}
+                </p>
+              </CardContent>
+            </Card>
 
-              <Card className="border-white/10 bg-white/5">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-slate-300">
-                    Recent activity
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-3xl font-semibold text-white">
-                    {stats.thisWeek}
-                  </p>
-                  <p className="mt-1 text-xs text-slate-400">
-                    completed this week · {stats.thisMonth} this month
-                  </p>
-                </CardContent>
-              </Card>
-            </>
-          )}
-        </section>
+            <Card className="border-slate-200 bg-white dark:border-white/10 dark:bg-white/5">
+              <CardHeader className="p-4 pb-1 sm:p-6 sm:pb-2">
+                <CardTitle className="text-xs font-medium text-slate-500 dark:text-slate-300 sm:text-sm">
+                  Recent activity
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
+                <p className="text-2xl font-semibold text-slate-900 dark:text-white sm:text-3xl">
+                  {stats.thisWeek}
+                </p>
+                <p className="mt-1 text-xs text-slate-400">
+                  completed this week · {stats.thisMonth} this month
+                </p>
+              </CardContent>
+            </Card>
+          </>
+        )}
+      </section>
 
-        {/* Settings */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          {/* Update Name */}
-          <Card className="border-white/10 bg-white/5">
-            <CardHeader>
-              <CardTitle className="text-lg text-white">Display name</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleUpdateName} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="profile-name" className="text-slate-300">
-                    Name
-                  </Label>
-                  <Input
-                    id="profile-name"
-                    value={name}
-                    onChange={(event) => setName(event.target.value)}
-                    placeholder="Your name"
-                    className="border-white/10 bg-slate-900/50 text-slate-100 placeholder:text-slate-500"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-slate-300">Email</Label>
-                  <Input
-                    value={user?.email || ""}
-                    readOnly
-                    disabled
-                    className="border-white/10 bg-slate-900/30 text-slate-400"
-                  />
-                  <p className="text-xs text-slate-500">
-                    Email cannot be changed.
-                  </p>
-                </div>
-                <Button
-                  type="submit"
-                  disabled={isSavingName}
-                  className="bg-violet-500 text-white hover:bg-violet-600"
-                >
-                  {isSavingName ? "Saving..." : "Save Changes"}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+      {/* Settings */}
+      <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2">
+        {/* Update Name */}
+        <Card className="border-slate-200 bg-white dark:border-white/10 dark:bg-white/5">
+          <CardHeader>
+            <CardTitle className="text-lg text-slate-900 dark:text-white">Display name</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleUpdateName} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="profile-name" className="text-slate-600 dark:text-slate-300">
+                  Name
+                </Label>
+                <Input
+                  id="profile-name"
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  placeholder="Your name"
+                  className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 dark:border-white/10 dark:bg-slate-900/50 dark:text-slate-100 dark:placeholder:text-slate-500"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-slate-600 dark:text-slate-300">Email</Label>
+                <Input
+                  value={user?.email || ""}
+                  readOnly
+                  disabled
+                  className="border-slate-200 bg-slate-50 text-slate-400 dark:border-white/10 dark:bg-slate-900/30"
+                />
+                <p className="text-xs text-slate-400 dark:text-slate-500">
+                  Email cannot be changed.
+                </p>
+              </div>
+              <Button
+                type="submit"
+                disabled={isSavingName}
+                className="w-full bg-violet-500 text-white hover:bg-violet-600 sm:w-auto"
+              >
+                {isSavingName ? "Saving..." : "Save Changes"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
 
-          {/* Change Password */}
-          <Card className="border-white/10 bg-white/5">
-            <CardHeader>
-              <CardTitle className="text-lg text-white">Change password</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleChangePassword} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="current-password" className="text-slate-300">
-                    Current password
-                  </Label>
-                  <Input
-                    id="current-password"
-                    type="password"
-                    value={currentPassword}
-                    onChange={(event) => setCurrentPassword(event.target.value)}
-                    placeholder="••••••••"
-                    className="border-white/10 bg-slate-900/50 text-slate-100 placeholder:text-slate-500"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="new-password" className="text-slate-300">
-                    New password
-                  </Label>
-                  <Input
-                    id="new-password"
-                    type="password"
-                    value={newPassword}
-                    onChange={(event) => setNewPassword(event.target.value)}
-                    placeholder="••••••••"
-                    className="border-white/10 bg-slate-900/50 text-slate-100 placeholder:text-slate-500"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="confirm-password" className="text-slate-300">
-                    Confirm new password
-                  </Label>
-                  <Input
-                    id="confirm-password"
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(event) => setConfirmPassword(event.target.value)}
-                    placeholder="••••••••"
-                    className="border-white/10 bg-slate-900/50 text-slate-100 placeholder:text-slate-500"
-                  />
-                </div>
-                <Button
-                  type="submit"
-                  disabled={isChangingPassword}
-                  className="bg-violet-500 text-white hover:bg-violet-600"
-                >
-                  {isChangingPassword ? "Changing..." : "Change Password"}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+        {/* Change Password */}
+        <Card className="border-slate-200 bg-white dark:border-white/10 dark:bg-white/5">
+          <CardHeader>
+            <CardTitle className="text-lg text-slate-900 dark:text-white">Change password</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleChangePassword} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="current-password" className="text-slate-600 dark:text-slate-300">
+                  Current password
+                </Label>
+                <Input
+                  id="current-password"
+                  type="password"
+                  value={currentPassword}
+                  onChange={(event) => setCurrentPassword(event.target.value)}
+                  placeholder="••••••••"
+                  className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 dark:border-white/10 dark:bg-slate-900/50 dark:text-slate-100 dark:placeholder:text-slate-500"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="new-password" className="text-slate-600 dark:text-slate-300">
+                  New password
+                </Label>
+                <Input
+                  id="new-password"
+                  type="password"
+                  value={newPassword}
+                  onChange={(event) => setNewPassword(event.target.value)}
+                  placeholder="••••••••"
+                  className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 dark:border-white/10 dark:bg-slate-900/50 dark:text-slate-100 dark:placeholder:text-slate-500"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirm-password" className="text-slate-600 dark:text-slate-300">
+                  Confirm new password
+                </Label>
+                <Input
+                  id="confirm-password"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(event) => setConfirmPassword(event.target.value)}
+                  placeholder="••••••••"
+                  className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 dark:border-white/10 dark:bg-slate-900/50 dark:text-slate-100 dark:placeholder:text-slate-500"
+                />
+              </div>
+              <Button
+                type="submit"
+                disabled={isChangingPassword}
+                className="w-full bg-violet-500 text-white hover:bg-violet-600 sm:w-auto"
+              >
+                {isChangingPassword ? "Changing..." : "Change Password"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Danger Zone */}
+      <div className="mt-6 sm:mt-8">
+        <Separator className="bg-slate-200 dark:bg-white/10" />
+        <div className="mt-6 rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-500/20 dark:bg-red-500/5 sm:p-6">
+          <h3 className="text-lg font-semibold text-red-600 dark:text-red-200">Danger zone</h3>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            Sign out of your account on this device.
+          </p>
         </div>
-
-        {/* Danger Zone */}
-        <div className="mt-8">
-          <Separator className="bg-white/10" />
-          <div className="mt-6 rounded-xl border border-red-500/20 bg-red-500/5 p-6">
-            <h3 className="text-lg font-semibold text-red-200">Danger zone</h3>
-            <p className="mt-1 text-sm text-slate-400">
-              Sign out of your account on this device.
-            </p>
-            <Button
-              type="button"
-              onClick={handleSignOut}
-              disabled={isSigningOut}
-              variant="outline"
-              className="mt-4 border-red-500/40 bg-red-500/10 text-red-200 hover:bg-red-500/20"
-            >
-              {isSigningOut ? "Signing out..." : "Sign Out"}
-            </Button>
-          </div>
-        </div>
-      </main>
-    </div>
+      </div>
+    </AppLayout>
   )
 }

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { CheckCircle2, Mic, Square, VideoOff } from "lucide-react"
+import { CheckCircle2, Mic, Square, VideoOff, Volume2, VolumeX } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -17,6 +17,7 @@ import { Textarea } from "@/components/ui/textarea"
 import Spinner from "@/components/ui/Spinner"
 import api from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
+import { useSpeechSynthesis } from "@/hooks/useSpeechSynthesis"
 
 function getQuestionText(item) {
   if (!item) {
@@ -49,6 +50,15 @@ export default function InterviewPage() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { toast } = useToast()
+  const {
+    speak: ttsSpeak,
+    stop: ttsStop,
+    replay: ttsReplay,
+    isSpeaking: ttsIsSpeaking,
+    isMuted: ttsIsMuted,
+    toggleMute: ttsToggleMute,
+    isSupported: ttsSupported,
+  } = useSpeechSynthesis()
 
   const [questions, setQuestions] = useState([])
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -135,6 +145,7 @@ export default function InterviewPage() {
       setPhase("done")
       stopRecording()
       stopWebcam()
+      ttsStop()
 
       if (thinkingTimeoutRef.current) {
         clearTimeout(thinkingTimeoutRef.current)
@@ -430,6 +441,9 @@ export default function InterviewPage() {
       return
     }
 
+    // Auto-speak the question when it appears
+    ttsSpeak(sourceText)
+
     let wordIndex = 0
     const intervalId = setInterval(() => {
       wordIndex += 1
@@ -443,8 +457,9 @@ export default function InterviewPage() {
 
     return () => {
       clearInterval(intervalId)
+      ttsStop()
     }
-  }, [activePromptText, isPromptPhase, promptKey])
+  }, [activePromptText, isPromptPhase, promptKey, ttsSpeak, ttsStop])
 
   useEffect(() => {
     if (phase === "loading" || phase === "done") {
@@ -492,8 +507,8 @@ export default function InterviewPage() {
 
   if (loadError) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-slate-950 px-6 text-slate-100">
-        <p className="max-w-lg text-center text-red-300">{loadError}</p>
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-slate-50 px-6 text-slate-800 dark:bg-slate-950 dark:text-slate-100">
+        <p className="max-w-lg text-center text-red-500 dark:text-red-300">{loadError}</p>
         <Button
           onClick={() => navigate("/dashboard")}
           className="bg-violet-500 text-white hover:bg-violet-600"
@@ -505,15 +520,15 @@ export default function InterviewPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 p-6 text-slate-100 md:p-8">
-      <div className="mx-auto w-full max-w-7xl space-y-5">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-white">Live Interview</h1>
+    <div className="min-h-screen bg-slate-50 p-4 text-slate-800 dark:bg-slate-950 dark:text-slate-100 sm:p-6 md:p-8">
+      <div className="mx-auto w-full max-w-7xl space-y-4 sm:space-y-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <h1 className="text-xl font-semibold text-slate-900 dark:text-white sm:text-2xl">Live Interview</h1>
           <Dialog open={isEndDialogOpen} onOpenChange={setIsEndDialogOpen}>
             <DialogTrigger asChild>
               <Button
                 variant="outline"
-                className="border-red-500/40 bg-red-500/10 text-red-200 hover:bg-red-500/20"
+                className="w-full border-red-500/40 bg-red-500/10 text-red-200 hover:bg-red-500/20 sm:w-auto"
               >
                 End Interview Early
               </Button>
@@ -530,7 +545,7 @@ export default function InterviewPage() {
                 <Button
                   variant="outline"
                   onClick={() => setIsEndDialogOpen(false)}
-                  className="border-white/20 bg-transparent text-slate-100 hover:bg-white/10"
+                  className="border-slate-300 bg-transparent text-slate-700 hover:bg-slate-100 dark:border-white/20 dark:text-slate-100 dark:hover:bg-white/10"
                 >
                   Cancel
                 </Button>
@@ -548,34 +563,34 @@ export default function InterviewPage() {
           </Dialog>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:gap-5 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <Card className="h-full border-white/10 bg-white/5">
+            <Card className="h-full border-slate-200 bg-white dark:border-white/10 dark:bg-white/5">
               <CardHeader>
-                <div className="flex items-center gap-4">
-                  <div className="relative h-20 w-20">
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="relative h-14 w-14 sm:h-20 sm:w-20">
                     <div className="absolute inset-0 rounded-2xl bg-violet-500/25 animate-ping" />
                     <div className="absolute inset-2 rounded-xl bg-violet-500/35 animate-pulse" />
-                    <div className="absolute inset-5 rounded-md bg-violet-300/90" />
+                    <div className="absolute inset-4 rounded-md bg-violet-300/90 sm:inset-5" />
                   </div>
                   <div>
-                    <CardTitle className="text-white">AI Interviewer</CardTitle>
-                    <CardDescription className="text-slate-300">
+                    <CardTitle className="text-slate-900 dark:text-white">AI Interviewer</CardTitle>
+                    <CardDescription className="text-slate-500 dark:text-slate-300">
                       Stay concise and think aloud through your decisions.
                     </CardDescription>
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-5">
-                <div className="min-h-[180px] rounded-xl border border-white/10 bg-slate-900/40 p-5">
+                <div className="min-h-[140px] rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-slate-900/40 sm:min-h-[180px] sm:p-5">
                   {phase === "ready" ? (
-                    <p className="text-lg text-slate-200">
+                    <p className="text-lg text-slate-600 dark:text-slate-200">
                       Click Begin Interview to start
                     </p>
                   ) : null}
 
                   {phase === "loading" ? (
-                    <div className="flex items-center gap-2 text-slate-300">
+                    <div className="flex items-center gap-2 text-slate-500 dark:text-slate-300">
                       <Spinner className="h-5 w-5 border-slate-500 border-t-violet-400" />
                       Preparing your interview...
                     </div>
@@ -588,18 +603,56 @@ export default function InterviewPage() {
                     phase === "followup") && (
                     <div className="space-y-3">
                       {answerTarget === "followup" || phase === "followup" ? (
-                        <p className="inline-flex rounded-full border border-violet-400/40 bg-violet-500/15 px-3 py-1 text-xs font-medium uppercase tracking-wide text-violet-200">
+                        <p className="inline-flex rounded-full border border-violet-400/40 bg-violet-500/15 px-3 py-1 text-xs font-medium uppercase tracking-wide text-violet-700 dark:text-violet-200">
                           Follow-up
                         </p>
                       ) : null}
-                      <p className="text-lg leading-relaxed text-white">
+                      <p className="text-lg leading-relaxed text-slate-900 dark:text-white">
                         {currentPromptDisplay}
                       </p>
+
+                      {/* TTS controls: Replay + Mute */}
+                      {ttsSupported ? (
+                        <div className="flex items-center gap-2 pt-1">
+                          {!ttsIsMuted ? (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={ttsReplay}
+                              disabled={ttsIsSpeaking}
+                              className="border-violet-400/40 bg-violet-500/10 text-violet-200 hover:bg-violet-500/20"
+                            >
+                              <Volume2 className="mr-1 h-3.5 w-3.5" />
+                              {ttsIsSpeaking ? "Speaking..." : "Replay"}
+                            </Button>
+                          ) : null}
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={ttsToggleMute}
+                            className="border-white/20 bg-transparent text-slate-300 hover:bg-white/10"
+                          >
+                            {ttsIsMuted ? (
+                              <>
+                                <VolumeX className="mr-1 h-3.5 w-3.5" />
+                                Unmute
+                              </>
+                            ) : (
+                              <>
+                                <Volume2 className="mr-1 h-3.5 w-3.5" />
+                                Mute
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      ) : null}
                     </div>
                   )}
 
                   {phase === "done" ? (
-                    <p className="text-lg text-slate-100">
+                    <p className="text-lg text-slate-700 dark:text-slate-100">
                       Interview complete! Generating your feedback...
                     </p>
                   ) : null}
@@ -623,7 +676,7 @@ export default function InterviewPage() {
                           value={currentAnswer}
                           onChange={(event) => setCurrentAnswer(event.target.value)}
                           placeholder="Edit your answer if needed..."
-                          className="min-h-[140px] border-white/10 bg-slate-900/50 text-slate-100"
+                          className="min-h-[140px] border-slate-300 bg-white text-slate-900 dark:border-white/10 dark:bg-slate-900/50 dark:text-slate-100"
                         />
                         <div className="flex gap-2">
                           <Button
@@ -636,7 +689,7 @@ export default function InterviewPage() {
                             <Button
                               variant="outline"
                               onClick={startListening}
-                              className="border-white/20 text-slate-200 hover:bg-white/10"
+                              className="border-violet-400/40 bg-violet-500/10 text-violet-700 hover:bg-violet-500/20 dark:text-violet-200"
                             >
                               <Mic className="mr-1 h-4 w-4" />
                               Re-record
@@ -656,21 +709,21 @@ export default function InterviewPage() {
                         <Button
                           variant="outline"
                           onClick={() => setIsSpeechError(true)}
-                          className="border-amber-500/40 bg-amber-500/10 text-amber-200 hover:bg-amber-500/20"
+                          className="border-amber-500/40 bg-amber-500/10 text-amber-700 hover:bg-amber-500/20 dark:text-amber-200"
                         >
                           Type Instead
                         </Button>
                       </div>
                     ) : (
                       <>
-                        <p className="text-sm text-yellow-200">
+                        <p className="text-sm text-yellow-600 dark:text-yellow-200">
                           Type your answer below.
                         </p>
                         <Textarea
                           value={currentAnswer}
                           onChange={(event) => setCurrentAnswer(event.target.value)}
                           placeholder="Type your answer..."
-                          className="min-h-[140px] border-white/10 bg-slate-900/50 text-slate-100"
+                          className="min-h-[140px] border-slate-300 bg-white text-slate-900 dark:border-white/10 dark:bg-slate-900/50 dark:text-slate-100"
                         />
                         <div className="flex gap-2">
                           <Button
@@ -683,7 +736,7 @@ export default function InterviewPage() {
                             <Button
                               variant="outline"
                               onClick={() => setIsSpeechError(false)}
-                              className="border-white/20 text-slate-200 hover:bg-white/10"
+                              className="border-violet-400/40 bg-violet-500/10 text-violet-700 hover:bg-violet-500/20 dark:text-violet-200"
                             >
                               <Mic className="mr-1 h-4 w-4" />
                               Use Voice
@@ -705,20 +758,20 @@ export default function InterviewPage() {
                         <Square className="mr-1 h-4 w-4" />
                         Done Answering
                       </Button>
-                      <p className="text-sm text-red-300">Recording...</p>
+                      <p className="text-sm text-red-500 dark:text-red-300">Recording...</p>
                     </div>
                   </div>
                 ) : null}
 
                 {phase === "transcribing" ? (
-                  <div className="flex items-center gap-2 text-slate-300">
+                  <div className="flex items-center gap-2 text-slate-500 dark:text-slate-300">
                     <Spinner className="h-5 w-5 border-slate-500 border-t-violet-400" />
                     Transcribing your voice...
                   </div>
                 ) : null}
 
                 {phase === "thinking" ? (
-                  <div className="flex items-center gap-2 text-slate-300">
+                  <div className="flex items-center gap-2 text-slate-500 dark:text-slate-300">
                     <Spinner className="h-5 w-5 border-slate-500 border-t-violet-400" />
                     AI is thinking...
                   </div>
@@ -728,11 +781,11 @@ export default function InterviewPage() {
           </div>
 
           <div className="lg:col-span-1">
-            <Card className="h-full border-white/10 bg-white/5">
+            <Card className="h-full border-slate-200 bg-white dark:border-white/10 dark:bg-white/5">
               <CardHeader className="space-y-4">
-                <div className="overflow-hidden rounded-lg border border-white/10 bg-slate-900/50">
+                <div className="overflow-hidden rounded-lg border border-slate-200 bg-slate-100 dark:border-white/10 dark:bg-slate-900/50">
                   {webcamError ? (
-                    <div className="flex h-36 items-center justify-center gap-2 text-sm text-slate-300">
+                    <div className="flex h-28 items-center justify-center gap-2 text-sm text-slate-500 dark:text-slate-300 sm:h-36">
                       <VideoOff className="h-4 w-4" />
                       {webcamError}
                     </div>
@@ -742,7 +795,7 @@ export default function InterviewPage() {
                       autoPlay
                       playsInline
                       muted
-                      className="h-36 w-full object-cover"
+                      className="h-28 w-full object-cover sm:h-36"
                     />
                   )}
                 </div>
@@ -750,22 +803,22 @@ export default function InterviewPage() {
                   <p className="text-xs uppercase tracking-wide text-slate-400">
                     Time Left
                   </p>
-                  <p className="text-3xl font-semibold text-white">
+                  <p className="text-3xl font-semibold text-slate-900 dark:text-white">
                     {formatTime(timeLeft)}
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-sm font-medium text-slate-200">
+                  <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
                     Question {questionNumber} of {totalQuestions}
                   </p>
-                  <Progress value={progressValue} className="bg-slate-800" />
+                  <Progress value={progressValue} className="bg-slate-200 dark:bg-slate-800" />
                   <p className="text-xs text-slate-400">
                     Responses saved: {transcript.length}
                   </p>
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="max-h-[340px] space-y-2 overflow-y-auto pr-1">
+                <div className="max-h-[200px] space-y-2 overflow-y-auto pr-1 sm:max-h-[340px]">
                   {questions.map((item, index) => {
                     const isCurrent = phase !== "done" && index === currentIndex
                     const isCompleted =
@@ -776,8 +829,8 @@ export default function InterviewPage() {
                         key={item.id || `${index}-${getQuestionText(item)}`}
                         className={`flex items-center gap-2 rounded-md border px-3 py-2 text-sm ${
                           isCurrent
-                            ? "border-violet-400/50 bg-violet-500/15 text-violet-100"
-                            : "border-white/10 bg-slate-900/40 text-slate-200"
+                            ? "border-violet-400/50 bg-violet-500/15 text-violet-700 dark:text-violet-100"
+                            : "border-slate-200 bg-slate-50 text-slate-700 dark:border-white/10 dark:bg-slate-900/40 dark:text-slate-200"
                         }`}
                       >
                         <span className="w-5 text-center text-xs font-semibold">

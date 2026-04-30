@@ -271,7 +271,7 @@ export default function FeedbackPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 px-6 py-8 text-slate-100 md:px-10">
+    <div className="min-h-screen bg-slate-50 px-4 py-6 text-slate-800 dark:bg-slate-950 dark:text-slate-100 sm:px-6 sm:py-8 md:px-10">
       <style>{`
         @keyframes fadeSlideIn {
           from {
@@ -285,17 +285,17 @@ export default function FeedbackPage() {
         }
       `}</style>
 
-      <div className="mx-auto w-full max-w-6xl space-y-6">
+      <div className="mx-auto w-full max-w-6xl space-y-4 sm:space-y-6">
         <section style={sectionStyle(0)}>
-          <Card className="border-white/10 bg-white/5">
+          <Card className="border-slate-200 bg-white dark:border-white/10 dark:bg-white/5">
             <CardContent className="pt-6">
-              <div className="grid grid-cols-1 gap-6 lg:grid-cols-[220px,1fr]">
+              <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-[220px,1fr]">
                 <div className="flex items-center justify-center">
                   <div
-                    className={`relative flex h-40 w-40 items-center justify-center rounded-full bg-gradient-to-br ${scoreGradient}`}
+                    className={`relative flex h-28 w-28 items-center justify-center rounded-full bg-gradient-to-br sm:h-40 sm:w-40 ${scoreGradient}`}
                   >
-                    <div className="absolute inset-[10px] rounded-full bg-slate-950/95" />
-                    <p className={`relative text-4xl font-bold ${scoreTextColor}`}>
+                    <div className="absolute inset-[8px] rounded-full bg-white/95 dark:bg-slate-950/95 sm:inset-[10px]" />
+                    <p className={`relative text-3xl font-bold sm:text-4xl ${scoreTextColor}`}>
                       {displayScore}
                     </p>
                   </div>
@@ -317,11 +317,11 @@ export default function FeedbackPage() {
                     </Badge>
                   </div>
 
-                  <p className="text-sm text-slate-300">
+                  <p className="text-sm text-slate-500 dark:text-slate-300">
                     Completed on {formatDate(interview?.completedAt)}
                   </p>
 
-                  <blockquote className="rounded-lg border-l-4 border-violet-400 bg-violet-500/10 px-4 py-3 text-slate-100">
+                  <blockquote className="rounded-lg border-l-4 border-violet-400 bg-violet-500/10 px-4 py-3 text-slate-700 dark:text-slate-100">
                     {feedback?.summary || "No summary available yet."}
                   </blockquote>
                 </div>
@@ -331,43 +331,43 @@ export default function FeedbackPage() {
         </section>
 
         <section style={sectionStyle(1)}>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <Card className="border-white/10 bg-white/5">
+          <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-3">
+            <Card className="border-slate-200 bg-white dark:border-white/10 dark:bg-white/5">
               <CardHeader className="pb-2">
-                <CardTitle className="text-base text-white">
+                <CardTitle className="text-base text-slate-900 dark:text-white">
                   Communication Score
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                <p className="text-2xl font-semibold text-white">
+                <p className="text-2xl font-semibold text-slate-900 dark:text-white">
                   {feedback?.communicationScore ?? 0}
                 </p>
                 <Progress value={feedback?.communicationScore ?? 0} />
               </CardContent>
             </Card>
 
-            <Card className="border-white/10 bg-white/5">
+            <Card className="border-slate-200 bg-white dark:border-white/10 dark:bg-white/5">
               <CardHeader className="pb-2">
-                <CardTitle className="text-base text-white">
+                <CardTitle className="text-base text-slate-900 dark:text-white">
                   Technical Score
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                <p className="text-2xl font-semibold text-white">
+                <p className="text-2xl font-semibold text-slate-900 dark:text-white">
                   {feedback?.technicalScore ?? 0}
                 </p>
                 <Progress value={feedback?.technicalScore ?? 0} />
               </CardContent>
             </Card>
 
-            <Card className="border-white/10 bg-white/5">
+            <Card className="border-slate-200 bg-white dark:border-white/10 dark:bg-white/5">
               <CardHeader className="pb-2">
-                <CardTitle className="text-base text-white">
+                <CardTitle className="text-base text-slate-900 dark:text-white">
                   Confidence Score
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                <p className="text-2xl font-semibold text-white">
+                <p className="text-2xl font-semibold text-slate-900 dark:text-white">
                   {feedback?.confidenceScore ?? 0}
                 </p>
                 <Progress value={feedback?.confidenceScore ?? 0} />
@@ -377,37 +377,37 @@ export default function FeedbackPage() {
         </section>
 
         <section style={sectionStyle(2)}>
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <Card className="border-white/10 bg-white/5">
+          <div className="grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-2">
+            <Card className="border-slate-200 bg-white dark:border-white/10 dark:bg-white/5">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg text-white">Strengths</CardTitle>
+                <CardTitle className="text-lg text-slate-900 dark:text-white">Strengths</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {strengths.length === 0 ? (
-                  <p className="text-sm text-slate-300">No strengths listed.</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-300">No strengths listed.</p>
                 ) : (
                   strengths.map((item, index) => (
                     <div key={`${item}-${index}`} className="flex items-start gap-2">
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 text-green-400" />
-                      <p className="text-sm text-slate-100">{item}</p>
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 text-green-500" />
+                      <p className="text-sm text-slate-700 dark:text-slate-100">{item}</p>
                     </div>
                   ))
                 )}
               </CardContent>
             </Card>
 
-            <Card className="border-white/10 bg-white/5">
+            <Card className="border-slate-200 bg-white dark:border-white/10 dark:bg-white/5">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg text-white">Improvements</CardTitle>
+                <CardTitle className="text-lg text-slate-900 dark:text-white">Improvements</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {improvements.length === 0 ? (
-                  <p className="text-sm text-slate-300">No improvements listed.</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-300">No improvements listed.</p>
                 ) : (
                   improvements.map((item, index) => (
                     <div key={`${item}-${index}`} className="flex items-start gap-2">
-                      <TriangleAlert className="mt-0.5 h-4 w-4 text-amber-400" />
-                      <p className="text-sm text-slate-100">{item}</p>
+                      <TriangleAlert className="mt-0.5 h-4 w-4 text-amber-500" />
+                      <p className="text-sm text-slate-700 dark:text-slate-100">{item}</p>
                     </div>
                   ))
                 )}
@@ -417,38 +417,38 @@ export default function FeedbackPage() {
         </section>
 
         <section style={sectionStyle(3)}>
-          <Card className="border-white/10 bg-white/5">
+          <Card className="border-slate-200 bg-white dark:border-white/10 dark:bg-white/5">
             <CardHeader>
-              <CardTitle className="text-xl text-white">
+              <CardTitle className="text-xl text-slate-900 dark:text-white">
                 Per-question breakdown
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {questionFeedback.length === 0 ? (
-                <p className="text-sm text-slate-300">No question-level feedback yet.</p>
+                <p className="text-sm text-slate-500 dark:text-slate-300">No question-level feedback yet.</p>
               ) : (
                 questionFeedback.map((item, index) => (
                   <div
                     key={`${item?.question}-${index}`}
-                    className="rounded-lg border border-white/10 bg-slate-900/40 p-4"
+                    className="rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-slate-900/40"
                   >
                     <div className="mb-2 flex items-start justify-between gap-3">
-                      <p className="font-semibold text-white">
+                      <p className="font-semibold text-slate-900 dark:text-white">
                         {item?.question || "Question"}
                       </p>
                       <Badge className={outOfTenBadge(Number(item?.score || 0))}>
                         {Number(item?.score || 0)}/10
                       </Badge>
                     </div>
-                    <p className="mb-2 text-sm text-slate-200">
+                    <p className="mb-2 text-sm text-slate-600 dark:text-slate-200">
                       {item?.feedback || "No feedback provided."}
                     </p>
                     <Accordion type="single" collapsible>
                       <AccordionItem value={`ideal-${index}`}>
-                        <AccordionTrigger className="text-slate-200">
+                        <AccordionTrigger className="text-slate-700 dark:text-slate-200">
                           View ideal answer
                         </AccordionTrigger>
-                        <AccordionContent className="text-slate-300">
+                        <AccordionContent className="text-slate-500 dark:text-slate-300">
                           {item?.idealAnswer || "No ideal answer provided."}
                         </AccordionContent>
                       </AccordionItem>
@@ -461,17 +461,17 @@ export default function FeedbackPage() {
         </section>
 
         <section style={sectionStyle(4)}>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Button
               onClick={() => navigate("/setup")}
-              className="bg-violet-500 text-white hover:bg-violet-600"
+              className="w-full bg-violet-500 text-white hover:bg-violet-600 sm:w-auto"
             >
               Start New Interview
             </Button>
             <Button
               variant="outline"
               onClick={() => navigate("/dashboard")}
-              className="border-white/20 bg-transparent text-slate-100 hover:bg-white/10"
+              className="w-full border-slate-300 bg-transparent text-slate-700 hover:bg-slate-100 dark:border-white/20 dark:text-slate-100 dark:hover:bg-white/10 sm:w-auto"
             >
               Back to Dashboard
             </Button>
@@ -479,7 +479,7 @@ export default function FeedbackPage() {
               variant="outline"
               onClick={downloadReport}
               disabled={downloadInProgress}
-              className="border-white/20 bg-transparent text-slate-100 hover:bg-white/10"
+              className="w-full border-slate-300 bg-transparent text-slate-700 hover:bg-slate-100 dark:border-white/20 dark:text-slate-100 dark:hover:bg-white/10 sm:w-auto"
             >
               {downloadInProgress ? "Preparing..." : "Download Report"}
             </Button>

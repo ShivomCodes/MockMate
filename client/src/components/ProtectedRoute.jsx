@@ -7,11 +7,11 @@ export default function ProtectedRoute({ children }) {
 
   if (isPending) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-950 px-6">
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 px-6 dark:bg-slate-950">
         <div className="w-full max-w-2xl space-y-4">
-          <Skeleton className="h-10 w-40 bg-white/10" />
-          <Skeleton className="h-36 w-full bg-white/10" />
-          <Skeleton className="h-36 w-full bg-white/10" />
+          <Skeleton className="h-10 w-40 bg-slate-200 dark:bg-white/10" />
+          <Skeleton className="h-36 w-full bg-slate-200 dark:bg-white/10" />
+          <Skeleton className="h-36 w-full bg-slate-200 dark:bg-white/10" />
         </div>
       </div>
     )
